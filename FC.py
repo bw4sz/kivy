@@ -1,4 +1,3 @@
-#File chooser
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.factory import Factory
