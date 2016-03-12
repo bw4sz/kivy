@@ -8,13 +8,20 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.slider import Slider
 from kivy.uix.checkbox import CheckBox
+from kivy.uix.image import Image
 
 #For hyperlinks
 import webbrowser
         
 class MotionMeerkatApp(App):
     def build(self):
-                
+        
+        #Defaults for input variables
+        self.mode='auto'
+        self.set_ROI=False
+        self.minSIZE=0.3
+        self.mogv=3
+        
         #create overall layout
         b = BoxLayout(orientation='vertical',spacing=0)
         
@@ -41,29 +48,40 @@ class MotionMeerkatApp(App):
         
         #Input file
         #########################
+        
+        #send to manual mode on press.
+        def mm_callback(instance):
+            self.mode='manual'
+            self.stop()
+            
         fc=TextInput(text="Input File or Folder",font_size=20,size_hint=(1,.5))
-        banner = BoxLayout(orientation='horizontal',size_hint=(.8,1))
+        mm=Button(text="Go to manual mode",size_hint=(.3,.5),on_press=mm_callback)
+
+            
+        banner = BoxLayout(orientation='horizontal',size_hint=(1,1))
         banner.add_widget(top)
         banner.add_widget(fc)
+        banner.add_widget(mm)
         
         #add banner to overall 
         b.add_widget(banner)
         
         #########################
-        #########################
         ####Mog sensitivity slider
         #########################
         
-        mogbox = BoxLayout(orientation='horizontal',spacing=10)
-        
+        #layout
+        mogbox = BoxLayout(orientation='horizontal',spacing=10,size_hint=(1,.2),pos_hint={'center_x':0.5})
+    
+        #actions
         moglabel=Label(text="How much background variation [eg. wind, waves, debris] do you expect in your video?",font_size=15,size_hint=(1,1))
         moglearn = Slider(min=0, max=5, value=3,size_hint=(.7,1),step=1)
         
         #define high
-        moglow=Label(text="No Movement",font_size=13.5,size_hint=(.15,1))
+        moglow=Label(text="No Movement",font_size=15,size_hint=(.15,1))
 
         #define low
-        moghigh=Label(text="Extreme movement",font_size=13.5,size_hint=(.15,1))
+        moghigh=Label(text="Extreme movement",font_size=15,size_hint=(.15,1))
         
         #Define output
         mogout=Label(font_size=20,size_hint=(.1,1))
@@ -87,24 +105,34 @@ class MotionMeerkatApp(App):
         #Tolerance slider
         #######################
         
-        tolbox = BoxLayout(orientation='horizontal',spacing=10)
-        tollabel=Label(text="How quickly does your organism move?",font_size=15,size_hint=(1,0.6))
+        tolbox = BoxLayout(orientation='horizontal',spacing=10,size_hint=(1,.6),pos_hint={'center_y':0.1})
+        tollabel=Label(text="How quickly does your organism move?",font_size=15,size_hint=(1,0.6))      
         tollearn = Slider(min=0, max=5, value=3,size_hint=(.7,1),step=1)
         
+        #images
+        cartoons=BoxLayout(size_hint=(.8,.4),pos_hint={'center_x':0.47})
+        shark=Image(source="C:/Users/Ben/Documents/Kivy/images/shark.png")
+        butterfly=Image(source="C:/Users/Ben/Documents/Kivy/images/butterfly.png")        
+        Bird=Image(source="C:/Users/Ben/Documents/Kivy/images/bird.png")        
+        
+        cartoons.add_widget(shark)
+        cartoons.add_widget(butterfly)        
+        cartoons.add_widget(Bird)
+        
         #define high
-        tollow=Label(text="Slow",font_size=13.5,size_hint=(.15,1))
+        tollow=Label(text="Slow",font_size=15,size_hint=(.15,1))
 
         #define low
-        tolhigh=Label(text="Fast",font_size=13.5,size_hint=(.15,1))
+        tolhigh=Label(text="Fast",font_size=15,size_hint=(.15,1))
         
         #Define output
         tolout=Label(font_size=20,size_hint=(.1,1))
         
         def on_call(instance, value):
             tolout.text = str(int(tollearn.value))
-            
+            self.mogv=tolout.text
         tollearn.bind(value=on_call)
-        
+       
         #add slider and labels to sublayout
         tolbox.add_widget(tollow)
         tolbox.add_widget(tollearn)
@@ -113,6 +141,7 @@ class MotionMeerkatApp(App):
         
         #add to overall layout
         b.add_widget(tollabel)
+        b.add_widget(cartoons)        
         b.add_widget(tolbox)           
         
         #########################
@@ -122,63 +151,64 @@ class MotionMeerkatApp(App):
         def on_checkbox_active(checkbox, value):
             if value:
                 print('The checkbox', checkbox, 'is active')
+                self.set_ROI=True
             else:
                 print('The checkbox', checkbox, 'is inactive')
+                self.set_ROI=False
+                
         
         crop = CheckBox()
         crop.bind(active=on_checkbox_active)        
+        roil=Label(text="Crop area of motion detection?",font_size=13)
+        
+        crop_layout=BoxLayout(orientation='vertical',size_hint=(1,.9),pos_hint={'top':1})
+        crop_layout.add_widget(roil)
+        crop_layout.add_widget(crop)
         
         ####################
         #Minimum size
         ####################
         
-        # OVerall Text Layout
-        ms=BoxLayout(size_hint=(1,.05))
-        
-        #Overall Action Layout
-        draw_crop=BoxLayout(orientation='horizontal',pos_hint={'center_x':0.52})
-        
-        #label for layours
-        mins_layout_label=BoxLayout()
-        
-        #labels
+        # Minsize enter
+        ms_layout=BoxLayout(orientation='vertical',size_hint=(.5,.9),pos_hint={'top':1})
         drawl=Label(text="Minimum object size (% frame)",font_size=13)
-        checkl=Label(text="Draw your object size on screen",font_size=13)
-        roil=Label(text="Crop area of motion detection?",font_size=13)
+        mstext=TextInput(text="0.03",size_hint=(.3,1),pos_hint={'center_x':0.5})
+        ms_layout.add_widget(drawl)
+        ms_layout.add_widget(mstext)
         
-        #Add to layout
-        mins_layout_label.add_widget(drawl)
-        mins_layout_label.add_widget(checkl)
-        
-        ms.add_widget(mins_layout_label)
-        ms.add_widget(roil)        
-
-        #Just a layout for the text box
-        mins_layout_action=BoxLayout()
-        
-        mstext=TextInput(text="0.03",size_hint=(.4,.4),pos_hint={'center_y':0.5})   
-        orlabel=Label(text="Or",font_size=11,size_hint=(0.3,1),pos=(100,100))
-        
+        #Minsize draw
+        ms_draw_layout=BoxLayout(orientation='vertical',size_hint=(.5,.9),pos_hint={'top':1})
+        checkl=Label(text="[b]Or [/b] Draw your object size on screen",font_size=13,markup=True)        
         draw = CheckBox()
-        draw.bind(active=on_checkbox_active)  
+        draw.bind(active=on_checkbox_active)      
+                
+        ms_draw_layout.add_widget(checkl)
+        ms_draw_layout.add_widget(draw)
+                
+        #Add vertical layouts side by side
+        bottom=BoxLayout()
+        bottom.add_widget(ms_layout)
+        bottom.add_widget(ms_draw_layout)
+        bottom.add_widget(crop_layout)
         
-        #add to layout       
-        mins_layout_action.add_widget(mstext)
-        mins_layout_action.add_widget(orlabel)
-        mins_layout_action.add_widget(draw)
-        
-        draw_crop.add_widget(mins_layout_action)
-        draw_crop.add_widget(crop)
-        
-        #add to overall layout
-        b.add_widget(ms)        
-        b.add_widget(draw_crop)
+        #add to root layout
+        b.add_widget(bottom)
         
         #Run!
-        t = Button(text='Run',font_size=40,size_hint=(1,.7))
+        def run_press(instance):
+            self.stop()        
+        t = Button(text='Run',font_size=40,size_hint=(1,.6),on_press=run_press)
+        
+
+            
         b.add_widget(t)
         
         return b
-
+        
 if __name__ == "__main__":
-    MotionMeerkatApp().run()
+    a=MotionMeerkatApp()
+    a.run()
+    
+    #Variables set
+    print([a.mode,a.minSIZE,a.set_ROI, a.mogv])
+
