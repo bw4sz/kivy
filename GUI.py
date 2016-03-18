@@ -12,27 +12,25 @@ from kivy.uix.image import Image
 #For hyperlinks
 import webbrowser
         
-def help_site(instance):
-    webbrowser.open("https://github.com/bw4sz/OpenCV_HummingbirdsMotion/wiki")
-
-def help_site(instance):
-    webbrowser.open("https://github.com/bw4sz/OpenCV_HummingbirdsMotion/issues")
-
-def on_check_roi(checkbox, value):
-    if value:
-        self.set_ROI=True
-    else:
-        self.set_ROI=False
-
-#Drawing checkbox
-def on_check_draw(checkbox, value):
-    if value:
-        self.drawSmall
-    else:
-        self.drawSmall
-
 class MainScreen(BoxLayout):
-    pass
+    def help_site(instance):
+        webbrowser.open("https://github.com/bw4sz/OpenCV_HummingbirdsMotion/wiki")
+    
+    def help_site(instance):
+        webbrowser.open("https://github.com/bw4sz/OpenCV_HummingbirdsMotion/issues")
+    
+    def on_check_roi(checkbox, value):
+        if value:
+            self.set_ROI=True
+        else:
+            self.set_ROI=False
+    
+    #Drawing checkbox
+    def on_check_draw(checkbox, value):
+        if value:
+            self.drawSmall
+        else:
+            self.drawSmall    
 
 class MotionMeerkatApp(App):
     def build(self):
