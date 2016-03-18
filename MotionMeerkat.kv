@@ -1,0 +1,132 @@
+
+<MainScreen>:
+    oriertation:'vertical'
+    BoxLayout:
+        oriertation:'vertical'
+        Label:
+            text:"MotionMeerkat V2.0"
+            font_size:12
+        Button:
+            text:"Help"
+            font_size:10
+            on_press: help_site
+        Button:
+            text:"Submit Issue"
+            font_size:10
+            on_press:help_issue
+    BoxLayout:
+        TextInput:
+            id:fc
+            text:"Input File or Folder"
+            font_size:20
+            size_hint:(1,.5)
+        TextInput:
+            id:outd
+            text:"Output Location (C:/MotionMeerktat)"
+            font_size:20
+            size_hint:(.645,.5)
+            pos_hint:{'center_x':0.485}
+        Button:
+            #on_press:screen manager?
+            size_hint:(0.3,0.5)
+    BoxLayout:
+        oriertation:'horizontal'
+        spacing:10
+        size_hint:(1,0.2)
+        pos_hint:{'center_x':0.5}
+        Label:
+            text:"How much background variation [eg. wind, waves, debris] do you expect in your video?"
+            font_size:15
+            size_hint:(1,1)
+    BoxLayout:
+        Label:
+            text:"No Movement"
+            font_size:15
+            size_hint:(.15,1)
+        Slider:
+            id:moglearn
+            min:0
+            max:5
+            value:3
+            step:1
+            size_hint:(0.7,1)    
+        Label:
+            text:"Extreme Movement"
+            font_size:15
+            size_hint:(.15,1)
+        Label:
+            text:str(moglearn.value)
+    BoxLayout:
+        oriertation:'horizontal'
+        spacing:10
+        size_hint:(1,0.6)
+        pos_hint:{'center_y':0.1}
+        Label:
+            text:"How quickly does your organism move?"
+            font_size:15
+            size_hint:(1,0.6)
+    BoxLayout:
+        oriertation:'horizontal'
+        size_hint:(0.8,0.4)
+        pos_hint:{'center_x':0.47}
+        Image:
+            source:"images/shark.png"
+        Image:
+            source:"images/butterfly.png"       
+        Image:
+            source:"images/bird.png"
+    BoxLayout:
+        Label:
+            text:"Slow"
+            font_size:15
+            size_hint:(.15,1)
+        Slider:
+            id:tollearn
+            min:0
+            max:5
+            value:3
+            step:1
+            size_hint:(0.7,1)    
+        Label:
+            text:"Fast"
+            font_size:15
+            size_hint:(.15,1)
+        Label:
+            text:str(tollearn.value)
+    BoxLayout:
+        BoxLayout:
+            oriertation:'vertical'
+            size_hint:(0.5,0.9)
+            pos_hint:{'top':1}
+            Label:
+                text:"Minimum object size (% frame)"
+                font_size:13
+            TextInput:
+                id:mstext
+                text:"0.03"
+                size_hint:(0.3,0.1)
+                pos_hint:{'center_x':0.5}
+        BoxLayout:
+            oriertation:'vertical'
+            size_hint:(0.5,0.9)
+            pos_hint:{'top':1}
+            Label:
+                text:"[b]Or [/b] Draw your object size on screen"
+                font_size:13
+                markup:True
+            CheckBox:
+                on_active:on_check_draw
+        BoxLayout:
+            oriertation:'vertical'
+            size_hint:(1,0.9)
+            pos_hint:{'top':1}
+            Label:
+                text:"Crop area of motion detection"
+                font_size:13
+            CheckBox:
+                on_active: on_check_roi
+    Button: 
+        text:"Run"
+        font_size:40
+        size_hint:(1,0.6)
+        on_press:stop
